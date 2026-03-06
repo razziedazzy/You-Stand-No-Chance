@@ -1,46 +1,65 @@
 package net.astridiol.ysncf.item;
 
 import net.astridiol.ysncf.ysncf;
-import net.minecraft.item.Item;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.ToolMaterial;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.*;
+import java.util.function.Function;
 
 public class ModItems {
-    private static Identifier Item;
-    public static final Item WOODSCYTHE = registerItem("woodscythe",
-        new SwordItem(ToolMaterial.WOOD, 2, -3f, new Item.Settings()
-                .registryKey(RegistryKey.of(RegistryKey.ofRegistry(Item),  Identifier.of(ysncf.MOD_ID, "woodscythe")))));
 
-    public static final Item STONESCYTHE = registerItem("stonescythe",
-            new SwordItem(ToolMaterial.STONE, 3, -3f, new Item.Settings()
-                    .registryKey(RegistryKey.of(RegistryKey.ofRegistry(Item),  Identifier.of(ysncf.MOD_ID, "stonescythe")))));
-
-    public static final Item GOLDSCYTHE = registerItem("goldscythe",
-            new SwordItem(ToolMaterial.GOLD, 7, -3f, new Item.Settings()
-                    .registryKey(RegistryKey.of(RegistryKey.ofRegistry(Item),  Identifier.of(ysncf.MOD_ID, "goldscythe")))));
-
-    public static final Item IRONSCYTHE = registerItem("ironscythe",
-            new SwordItem(ToolMaterial.WOOD, 7, -3f, new Item.Settings()
-                    .registryKey(RegistryKey.of(RegistryKey.ofRegistry(Item),  Identifier.of(ysncf.MOD_ID, "ironscythe")))));
-
-    public static final Item DIAMONDSCYTHE = registerItem("diamondscythe",
-            new SwordItem(ToolMaterial.WOOD, 9, -3f, new Item.Settings()
-                    .registryKey(RegistryKey.of(RegistryKey.ofRegistry(Item),  Identifier.of(ysncf.MOD_ID, "diamondscythe")))));
-
-    public static final Item NETHERITESCYTHE = registerItem("netheritescythe",
-            new SwordItem(ToolMaterial.WOOD, 13, -3f, new Item.Settings()
-                    .registryKey(RegistryKey.of(RegistryKey.ofRegistry(Item),  Identifier.of(ysncf.MOD_ID, "netheritescythe")))));
+    public static final Item IRONSCYTHE = register(
+            "ironscythe",
+            Item::new,
+            new Item.Properties().axe(ToolMaterial.WOOD, 2f, .2f)
+    );
 
 
-    private static Item registerItem(String name, Item item) {
-        return Registry.register(Registries.ITEM, Identifier.of(ysncf.MOD_ID, name), item);
+    public static final Item DIAMONDSCYTHE = register(
+            "diamonscythe",
+            Item::new,
+            new Item.Properties().axe(ToolMaterial.WOOD, 3f, .2f)
+    );
+
+
+
+    public static final Item NETHERITESCYTHE = register(
+            "netheritescythe",
+            Item::new,
+            new Item.Properties().axe(ToolMaterial.WOOD, 5f, .2f)
+    );
+
+
+    public static <T extends Item> T register(String name, Function<Item.Properties, T> itemFactory, Item.Properties settings) {
+        // Create the item key.
+        ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ysncf.MOD_ID, name));
+
+        // Create the item instance.
+        T item = itemFactory.apply(settings.setId(itemKey));
+
+
+        // Register the item.
+        Registry.register(BuiltInRegistries.ITEM, itemKey, item);
+
+        return item;
     }
 
-    public static void registerModItems() {
-        ysncf.LOGGER.info("Registering Mod Items for " + ysncf.MOD_ID);
+    public static void initialize() {
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, CUSTOM_CREATIVE_TAB_KEY, CUSTOM_CREATIVE_TAB);
     }
+    public static final ResourceKey<CreativeModeTab> CUSTOM_CREATIVE_TAB_KEY = ResourceKey.create(BuiltInRegistries.CREATIVE_MODE_TAB.key(), Identifier.fromNamespaceAndPath(ysncf.MOD_ID, "creative_tab"));
+    public static final CreativeModeTab CUSTOM_CREATIVE_TAB = FabricItemGroup.builder()
+            .icon(() -> new ItemStack(ModItems.NETHERITESCYTHE))
+            .title(Component.translatable("ysncf.scythes"))
+            .displayItems((params, output) -> {
+                output.accept(ModItems.IRONSCYTHE);
+                output.accept(ModItems.DIAMONDSCYTHE);
+                output.accept(ModItems.NETHERITESCYTHE);
+            })
+            .build();
 }

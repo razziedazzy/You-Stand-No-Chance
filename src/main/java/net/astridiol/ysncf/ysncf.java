@@ -1,6 +1,4 @@
 package net.astridiol.ysncf;
-
-import net.astridiol.ysncf.item.ModItemGroup;
 import net.astridiol.ysncf.item.ModItems;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
@@ -16,7 +14,6 @@ public class ysncf implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		ModItemGroup.registerItemGroups();
-		ModItems.registerModItems();
+		ModItems.initialize();
 	}
 }
