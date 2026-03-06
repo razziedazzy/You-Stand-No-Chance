@@ -1,5 +1,5 @@
 ## Overview
-This Mod Adds New Things Like Scythes. This Mod Is For People That Want More Weapons But Want Them to Feel Like Vanilla MC.
+This Mod Adds New Things Like Scythes for now.
 
 ## Features
 - **Multiple Scythe Types**: Different scythes crafted from various materials such as iron, diamond, and netherite.
